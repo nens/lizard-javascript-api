@@ -1,0 +1,52 @@
+{
+  "name": "Lizard-javascript-api",
+  "version": "0.1.0",
+  "description": "Library to interact with lizard assets, rasters and timeseries.",
+  "main": "lib/lizard.js",
+  "scripts": {
+    "build": "webpack --mode=build",
+    "dev": "webpack-dev-server --mode=dev --progress --colors",
+    "test": "npm run build && mocha --require babel-polyfill --compilers js:babel-core/register --colors -w ./test/*.spec.js"
+  },
+  "devDependencies": {
+    "babel": "6.3.13",
+    "babel-core": "6.1.18",
+    "babel-eslint": "5.0.0",
+    "babel-loader": "6.2.0",
+    "babel-plugin-add-module-exports": "0.1.2",
+    "babel-polyfill": "^6.20.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "chai": "3.4.1",
+    "eslint": "1.7.2",
+    "eslint-loader": "1.1.0",
+    "mocha": "2.3.4",
+    "nock": "^9.0.2",
+    "redux": "^3.0.4",
+    "redux-mock-store": "^1.2.1",
+    "webpack": "1.12.9",
+    "whatwg-fetch": "^2.0.1",
+    "yargs": "3.32.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nens/lizard-javascript-api.git"
+  },
+  "keywords": [
+    "lizard",
+    "api"
+  ],
+  "author": "Ernst Kuilder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nens/lizard-javascript-api/issues"
+  },
+  "homepage": "https://github.com/nens/lizard-javascript-api",
+  "dependencies": {
+    "es6-promise": "^4.0.5",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.3",
+    "redux-thunk": "^2.1.0",
+    "webpack-dev-server": "^1.16.2"
+  }
+}
