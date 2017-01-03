@@ -147,7 +147,7 @@ Returns:
 
 _Intersections_
 
-When you want to show a chart of the polder side water level your app needs to dispatch an `addIntersection` action. An intersection with a timeseries should contain a the timeseries `id` and optionally a time interval you are interested in plus any additional parameters you want to include in the request:
+When you want to show a chart of the polder side water level your app needs to dispatch an `addIntersection` action. An intersection with a timeseries should contain the timeseries `id` and optionally a time interval you are interested in plus any additional parameters you want to include in the request:
 
 ```js
 let whenIntersectionIsAdded = lizard.dispatch(actions.addIntersection('timeseries', {
@@ -176,6 +176,7 @@ Returns:
 ```js
 ...
 intersections: [{
+  type: 'timeseries';
   id: 'e0e59d70-8cc8-45f0-9748-b6b627991e3c',
   spaceTime: {
     start: 1356998400000,

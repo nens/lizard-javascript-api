@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --mode=build",
     "dev": "webpack-dev-server --mode=dev --progress --colors",
-    "test": "npm run build && mocha --require babel-polyfill --compilers js:babel-core/register --colors -w ./test/*.spec.js"
+    "test": "mocha --require babel-polyfill --compilers js:babel-core/register --colors -w ./test/*.spec.js"
   },
   "devDependencies": {
     "babel": "6.3.13",
@@ -26,7 +26,8 @@
     "redux-mock-store": "^1.2.1",
     "webpack": "1.12.9",
     "whatwg-fetch": "^2.0.1",
-    "yargs": "3.32.0"
+    "yargs": "3.32.0",
+    "webpack-dev-server": "^1.16.2"
   },
   "repository": {
     "type": "git",
@@ -46,7 +47,6 @@
     "es6-promise": "^4.0.5",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.3",
-    "redux-thunk": "^2.1.0",
-    "webpack-dev-server": "^1.16.2"
+    "redux-thunk": "^2.1.0"
   }
 }

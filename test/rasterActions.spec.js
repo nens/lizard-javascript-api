@@ -1,5 +1,3 @@
-import 'whatwg-fetch';
-
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import * as actions from '../src/actions/RasterActions';
@@ -27,7 +25,7 @@ describe('Raster actions', () => {
 
     nock('raster')
       .get(`/${id}`)
-      .reply(200, { body: { name: 'Hoogte' }});
+      .reply(200, { body: { name: 'Elevation' }});
     store = mockStore({ raster: [] });
     let whenRasterAdded = store.dispatch(actions.addRaster(id));
 
@@ -41,9 +39,9 @@ describe('Raster actions', () => {
     it('creates RECIEVE_RASTER when fetching todos has been done', () => {
       expectedAction = {
         type: types.RECIEVE_RASTER,
-        data: { name: 'Hoogte' }
+        data: { name: 'Elevation' }
       };
-      const store = mockStore({ raster: [] });
+      const store = mockStore({ raster: {} });
 
       whenRasterAdded
         .then(() => { // return of async actions

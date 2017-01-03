@@ -25,10 +25,11 @@ const recieveAsset = (entity, id, data) => {
   };
 };
 
-export const removeAsset = (index) => {
+export const removeAsset = (entity, id) => {
   return {
     type: REMOVE_ASSET,
-    index
+    entity,
+    id
   };
 };
 
@@ -44,7 +45,7 @@ export const getAsset = (entity, id) => {
       })
       .then(asset => {
         asset.timeseries.forEach(function (ts) {
-          ts.assetEntity = entity;
+          ts.asset = `${entity}$${id}`;
           ts.assetId = id;
         });
         dispatch(addTimeseries(asset.timeseries));

@@ -9,10 +9,10 @@ export const addRasterSync = (id) => {
   };
 };
 
-export const removeRaster = (index) => {
+export const removeRaster = (id) => {
   return {
     type: REMOVE_RASTER,
-    index
+    id
   };
 };
 

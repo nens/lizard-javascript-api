@@ -1,35 +1,26 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import find from 'lodash/find';
-import filter from 'lodash/filter';
+import get from 'lodash/get';
+import omit from 'lodash/omit';
 
-let defaultState = [];
+let defaultState = {};
 
-const findRaster = (rasters, id) => {
-  return find(rasters, (item) => {
-    return id.includes(item.id) || item.id.includes(id);
-  });
-};
+let newState = {};
 
 export default function (state = defaultState, action) {
   switch (action.type) {
     case ActionTypes.ADD_RASTER_SYNC:
-      return [...state, {id: action.id, name: action.name}];
+      newState = {...state};
+      newState[action.id] = { name: action.name };
+      return newState;
     case ActionTypes.REMOVE_RASTER:
-      return filter(state, (raster, index) => {
-        return index !== action.index;
-      });
+      return omit(state, {id: action.id});
     case ActionTypes.RECIEVE_RASTER:
-      let raster = findRaster(state, action.id);
+      let raster = get(state, action.id);
 
-      const index = state.indexOf(raster);
+      const newRaster = {...raster, ...omit(action.data, 'uuid')};
 
-      const newRaster = {...raster};
-
-      Object.assign(newRaster, action.data);
-      const newState = [...state];
-
-      newState[index] = newRaster;
-
+      newState = {...state};
+      newState[action.id] = newRaster;
       return newState;
     default:
       return state;

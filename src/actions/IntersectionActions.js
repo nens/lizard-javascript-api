@@ -6,7 +6,6 @@ import {
   TOGGLE_INTERSECTION
 } from '../constants/ActionTypes';
 
-import 'babel-polyfill';
 import { geomToWkt } from '../utils';
 
 const fetchIntersection = (intersection) => {
@@ -24,15 +23,15 @@ const fetchIntersection = (intersection) => {
     params.srs = 'EPSG:4326';
   }
 
-  let plural = intersection.type === 'timeseries' ?
+  let plural = intersection.dataType === 'timeseries' ?
   'timeseries' :
   intersection.type + 's';
 
   // TODO: we don't need the following crap, but raster data is different from
   // timeseries, is different from eventseries.
-  if (intersection.type === 'raster') {
+  if (intersection.dataType === 'raster') {
     plural = 'raster-aggregates';
-    params.rasters = intersection.id;
+    params.rasters = intersection.typeId;
   }
 
   const esc = encodeURIComponent;
@@ -45,13 +44,13 @@ const fetchIntersection = (intersection) => {
 
   // TODO: timeseries data is available under /timeseries/<uuid>, raster data
   // is available under /raster-aggregates/?raster=<uuid>.
-  if (intersection.type === 'raster') {
+  if (intersection.dataType === 'raster') {
     request = new Request(`api/v2/${plural}/?${query}`, {
       credentials: 'same-origin',
       params: params
     });
   } else {
-    request = new Request(`api/v2/${plural}/${intersection.id}/?${query}`, {
+    request = new Request(`api/v2/${plural}/${intersection.typeId}/?${query}`, {
       credentials: 'same-origin',
       params: params
     });
@@ -68,12 +67,12 @@ const recieveIntersection = (id, data) => {
   };
 };
 
-const update = (index, dispatch, getState) => {
-  const intersection = getState().intersections[index];
+const update = (id, dispatch, getState) => {
+  const intersection = getState().intersections[id];
 
   if (intersection.active) {
-    return fetchIntersection(intersection, intersection).then(response => {
-      dispatch(recieveIntersection(intersection.id, response));
+    return fetchIntersection(intersection).then(response => {
+      dispatch(recieveIntersection(id, response));
       return response;
     });
   } else {
@@ -81,9 +80,10 @@ const update = (index, dispatch, getState) => {
   }
 };
 
-const addIntersectionSync = (dataType, intersection) => {
+const addIntersectionSync = (id, dataType, intersection) => {
   return {
     type: ADD_INTERSECTION_SYNC,
+    id,
     dataType,
     ...intersection
   };
@@ -91,17 +91,17 @@ const addIntersectionSync = (dataType, intersection) => {
 
 export const addIntersection = (dataType, intersection) => {
   return function (dispatch, getState) {
-    dispatch(addIntersectionSync(dataType, intersection));
-    const index = getState().intersections.length - 1;
+    const id = Object.keys(getState().intersections).length;
 
-    return update(index, dispatch, getState);
+    dispatch(addIntersectionSync(id, dataType, intersection));
+    return update(id, dispatch, getState);
   };
 };
 
-export const removeIntersection = (index) => {
+export const removeIntersection = (id) => {
   return {
     type: REMOVE_INTERSECTION,
-    index
+    id
   };
 };
 
@@ -109,31 +109,31 @@ export const setGeometryToIntersection = (index, geometry) => {
 
 };
 
-const toggleIntersectionSync = (index) => {
+const toggleIntersectionSync = (id) => {
   return {
     type: TOGGLE_INTERSECTION,
-    index: index
+    id
   };
 };
 
-const setIntersectionSpaceTimeSync = (index, spaceTime) => {
+const setIntersectionSpaceTimeSync = (id, spaceTime) => {
   return {
     type: SET_INTERSECTION_SPACE_TIME,
-    index,
+    id,
     spaceTime
   };
 };
 
-export const toggleIntersection = (index) => {
+export const toggleIntersection = (id) => {
   return function (dispatch, getState) {
-    dispatch(toggleIntersectionSync(index));
-    return update(index, dispatch, getState);
+    dispatch(toggleIntersectionSync(id));
+    return update(id, dispatch, getState);
   };
 };
 
-export const setIntersectionSpaceTime = (index, spaceTime) => {
+export const setIntersectionSpaceTime = (id, spaceTime) => {
   return function (dispatch, getState) {
-    dispatch(setIntersectionSpaceTimeSync(index, spaceTime));
-    return update(index, dispatch, getState);
+    dispatch(setIntersectionSpaceTimeSync(id, spaceTime));
+    return update(id, dispatch, getState);
   };
 };
