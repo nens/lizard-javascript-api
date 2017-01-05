@@ -2,11 +2,11 @@
   "name": "Lizard-javascript-api",
   "version": "0.1.0",
   "description": "Library to interact with lizard assets, rasters and timeseries.",
-  "main": "lib/lizard.js",
+  "main": "lib/Lizard.js",
   "scripts": {
-    "build": "webpack --mode=build",
-    "dev": "webpack-dev-server --mode=dev --progress --colors",
-    "test": "mocha --require babel-polyfill --compilers js:babel-core/register --colors -w ./test/*.spec.js"
+    "test": "mocha --require babel-polyfill --compilers js:babel-core/register ./test/*.spec.js",
+    "build": "test && webpack --mode=build",
+    "start": "webpack-dev-server --mode=dev --progress --colors & npm run test -- --watch"
   },
   "devDependencies": {
     "babel": "6.3.13",
@@ -25,9 +25,9 @@
     "redux": "^3.0.4",
     "redux-mock-store": "^1.2.1",
     "webpack": "1.12.9",
+    "webpack-dev-server": "^1.16.2",
     "whatwg-fetch": "^2.0.1",
-    "yargs": "3.32.0",
-    "webpack-dev-server": "^1.16.2"
+    "yargs": "3.32.0"
   },
   "repository": {
     "type": "git",
@@ -35,7 +35,8 @@
   },
   "keywords": [
     "lizard",
-    "api"
+    "api",
+    "water"
   ],
   "author": "Ernst Kuilder",
   "license": "MIT",
