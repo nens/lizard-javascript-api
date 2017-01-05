@@ -1,6 +1,6 @@
 import {
   ADD_INTERSECTION_SYNC,
-  RECIEVE_INTERSECTION,
+  RECEIVE_INTERSECTION,
   REMOVE_INTERSECTION,
   SET_INTERSECTION_SPACE_TIME,
   TOGGLE_INTERSECTION
@@ -59,9 +59,9 @@ const fetchIntersection = (intersection) => {
   return fetch(request).then(response => response.json());
 };
 
-const recieveIntersection = (id, data) => {
+const receiveIntersection = (id, data) => {
   return {
-    type: RECIEVE_INTERSECTION,
+    type: RECEIVE_INTERSECTION,
     id,
     data
   };
@@ -72,7 +72,7 @@ const update = (id, dispatch, getState) => {
 
   if (intersection.active) {
     return fetchIntersection(intersection).then(response => {
-      dispatch(recieveIntersection(id, response));
+      dispatch(receiveIntersection(id, response));
       return response;
     });
   } else {

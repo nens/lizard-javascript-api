@@ -19,7 +19,7 @@ export default function (state = defaultState, action) {
       return newState;
     case ActionTypes.REMOVE_ASSET:
       return omit(state, `${action.entity}$${action.id}`);
-    case ActionTypes.RECIEVE_ASSET:
+    case ActionTypes.RECEIVE_ASSET:
       let key = `${action.entity}$${action.id}`;
 
       asset = state[key];

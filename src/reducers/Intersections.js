@@ -18,7 +18,7 @@ export default function (state = defaultState, action) {
       return newState;
     case ActionTypes.REMOVE_INTERSECTION:
       return omit(state, action.id);
-    case ActionTypes.RECIEVE_INTERSECTION:
+    case ActionTypes.RECEIVE_INTERSECTION:
       intersection = state[action.id];
 
       newIntersection = {...intersection};

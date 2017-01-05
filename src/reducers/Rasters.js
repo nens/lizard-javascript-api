@@ -10,11 +10,11 @@ export default function (state = defaultState, action) {
   switch (action.type) {
     case ActionTypes.ADD_RASTER_SYNC:
       newState = {...state};
-      newState[action.id] = { name: action.name };
+      newState[action.id] = {};
       return newState;
     case ActionTypes.REMOVE_RASTER:
-      return omit(state, {id: action.id});
-    case ActionTypes.RECIEVE_RASTER:
+      return omit(state, action.id);
+    case ActionTypes.RECEIVE_RASTER:
       let raster = get(state, action.id);
 
       const newRaster = {...raster, ...omit(action.data, 'uuid')};

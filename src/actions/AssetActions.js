@@ -1,6 +1,6 @@
 import {
   ADD_ASSET_SYNC,
-  RECIEVE_ASSET,
+  RECEIVE_ASSET,
   REMOVE_ASSET
 } from '../constants/ActionTypes';
 
@@ -16,9 +16,9 @@ const addAssetSync = (entity, id) => {
   };
 };
 
-const recieveAsset = (entity, id, data) => {
+const receiveAsset = (entity, id, data) => {
   return {
-    type: RECIEVE_ASSET,
+    type: RECEIVE_ASSET,
     entity,
     id,
     data
@@ -40,7 +40,7 @@ export const getAsset = (entity, id) => {
 
     return fetchItem(entity, id)
       .then(asset => {
-        dispatch(recieveAsset(entity, id, asset));
+        dispatch(receiveAsset(entity, id, asset));
         return asset;
       })
       .then(asset => {
