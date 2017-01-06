@@ -15,7 +15,7 @@ if (env === 'build') {
 }
 
 config = {
-  entry: ['babel-polyfill', 'whatwg-fetch', __dirname + '/src/index.js'],
+  entry: [__dirname + '/src/index.js'],
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
@@ -49,7 +49,17 @@ config = {
     root: path.resolve('./src'),
     extensions: ['', '.js']
   },
-  plugins: plugins
+  plugins: plugins,
+  externals: [
+    {
+      'isomorphic-fetch': {
+        root: 'isomorphic-fetch',
+        commonjs2: 'isomorphic-fetch',
+        commonjs: 'isomorphic-fetch',
+        amd: 'isomorphic-fetch'
+      }
+    }
+  ]
 };
 
 module.exports = config;
