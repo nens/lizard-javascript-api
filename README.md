@@ -40,6 +40,15 @@ intersections: {}
 Assets, eventseries, rasters and timeseries contain metadata and intersections contain eventseries, timeseries and raster data for time and space intersections.
 
 
+## Prior art
+
+- [Google Maps JS API](https://developers.google.com/maps/documentation/javascript/) is a developer library for interfacing with Google Maps from Javascript.
+- [carto.js](https://carto.com/docs/carto-engine/carto-js) facilitates interaction with CartoDB.
+- [mapbox.js](https://www.mapbox.com/mapbox.js/api/v3.0.1/) is a Mapbox specific wrapper around Leaflet.
+- [ArcGIS JS](https://developers.arcgis.com/javascript/)
+- [Boundless SDK](https://github.com/boundlessgeo/sdk)
+
+
 ##Usage:
 
 Lizard-API is a [Redux store](http://redux.js.org/) and as such follows the documentation of Redux. To use lizard-API you do not need any prior knowledge of Redux, though if you are developing a complex application or are already using redux: make sure to read the advanced section on redux and know how to combine your state with lizard.
