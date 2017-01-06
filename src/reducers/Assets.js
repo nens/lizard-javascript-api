@@ -6,7 +6,6 @@ let defaultState = {};
 let newState = {};
 
 export default function (state = defaultState, action) {
-  let asset;
 
   switch (action.type) {
     case ActionTypes.ADD_ASSET_SYNC:
@@ -20,9 +19,9 @@ export default function (state = defaultState, action) {
     case ActionTypes.REMOVE_ASSET:
       return omit(state, `${action.entity}$${action.id}`);
     case ActionTypes.RECEIVE_ASSET:
-      let key = `${action.entity}$${action.id}`;
+      const key = `${action.entity}$${action.id}`;
 
-      asset = state[key];
+      const asset = state[key];
 
       const newAsset = {...asset};
 
