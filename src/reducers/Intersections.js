@@ -1,6 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import omit from 'lodash/omit';
-import pick from 'lodash/pick';
 
 let defaultState = {};
 
@@ -23,7 +22,7 @@ export default function (state = defaultState, action) {
 
       newIntersection = {...intersection};
 
-      Object.assign(newIntersection, pick(action.data, ['events']));
+      newIntersection.data = action.payload.data || action.payload.events;
       newState = {...state};
       newState[action.id] = newIntersection;
       return newState;
