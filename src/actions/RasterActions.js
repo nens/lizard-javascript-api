@@ -1,4 +1,4 @@
-import { ADD_RASTER_SYNC, RECIEVE_RASTER, REMOVE_RASTER } from '../constants/ActionTypes';
+import { ADD_RASTER_SYNC, RECEIVE_RASTER, REMOVE_RASTER } from '../constants/ActionTypes';
 
 import { fetchItem } from '../utils';
 
@@ -9,16 +9,16 @@ export const addRasterSync = (id) => {
   };
 };
 
-export const removeRaster = (index) => {
+export const removeRaster = (id) => {
   return {
     type: REMOVE_RASTER,
-    index
+    id
   };
 };
 
-const recieveRaster = (id, data) => {
+const receiveRaster = (id, data) => {
   return {
-    type: RECIEVE_RASTER,
+    type: RECEIVE_RASTER,
     id,
     data
   };
@@ -29,7 +29,7 @@ export const addRaster = (id) => {
     dispatch(addRasterSync(id));
     return fetchItem('raster', id)
       .then(data => {
-        dispatch(recieveRaster(id, data));
+        dispatch(receiveRaster(id, data));
         return data;
       }
     );

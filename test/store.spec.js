@@ -1,4 +1,4 @@
-import Lizard from '../lib/Lizard.js';
+import Lizard from '../src';
 import externalEntity from './mockExternalEntity';
 
 import chai from 'chai';
@@ -13,17 +13,17 @@ describe('Given a default Lizard store', function () {
   describe('when I call getState', function () {
     it('should return the empty state', () => {
       expect(l.getState()).to.deep.equal({
-        assets: [],
-        intersections: [],
-        timeseries: [],
-        rasters: []
+        assets: {},
+        intersections: {},
+        timeseries: {},
+        rasters: {}
       });
     });
   });
 });
 
 describe('Given a Lizard store with initial state', function () {
-  const initial = {assets: [{entity: 'overflow', id: 5}]};
+  const initial = {assets: {'overflow$5': {entity: 'overflow', id: 5}}};
 
   const lWithInitial = Lizard(initial);
 

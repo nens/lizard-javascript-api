@@ -30,11 +30,11 @@ lizard.dispatch(actions.getAsset('pumpstation', 6853));
 At any time `lizard.getState()` returns a new object:
 
 ```json
-assets: [],
-eventseries: [],
-rasters: [],
-timeseries: [],
-intersections: []
+assets: {},
+eventseries: {},
+rasters: {},
+timeseries: {},
+intersections: {}
 ```
 
 Assets, eventseries, rasters and timeseries contain metadata and intersections contain eventseries, timeseries and raster data for time and space intersections.
@@ -75,7 +75,9 @@ The action `addPumpstation` adds the available data to the store synchronously:
 Returns:
 
 ```js
-[{entity: 'pumpstation', id: 6853}]
+{
+  pumpstation$6853: {entity: 'pumpstation', id: 6853}
+}
 ```
 
 It fetches the pumpstation data from the lizard server and returns a promise. To be informed when the request finishes, you can subscribe to changes to the store with a callback:
@@ -110,44 +112,47 @@ whenLizardPumpstationAdded.then(() => lizard.getState());
 Returns:
 ```js
 {
-  assets: [{
-    entity: 'pumpstation',
-    id: 6853
-    code: 'KGM-A-368',
-    name: 'De Waakzaamheid',
-    geometry: {
-        type: 'Point',
-        coordinates: [
-            4.895586999360215,
-            52.783234489793195,
-            0.0
-        ]
+  assets: {
+    pumpstation$6853: {
+      entity: 'pumpstation',
+      id: 6853
+      code: 'KGM-A-368',
+      name: 'De Waakzaamheid',
+      geometry: {
+          type: 'Point',
+          coordinates: [
+              4.895586999360215,
+              52.783234489793195,
+              0.0
+          ]
+      }
     },
     ...
-  }],
-  eventseries: [],
-  rasters: [],
-  timeseries: [{
-    uuid: 'e0e59d70-8cc8-45f0-9748-b6b627991e3c',
-    parameter: 'Water level',
-    unit: 'm',
-    asset: { entity: 'pumpstation', id: 6853},
-    location: 'Polder side'
-    ...
-  },{
-    uuid: '2cfd26ea-d126-4775-aa3c-e8df3efb3890',
-    parameter: 'Water level',
-    unit: 'm',
-    asset: { entity: 'pumpstation', id: 6853},
-    location: 'Canal side'
-    ...
-  }]
+  }},
+  eventseries: {},
+  rasters: {},
+  timeseries: {
+    'e0e59d70-8cc8-45f0-9748-b6b627991e3c': {
+      parameter: 'Water level',
+      unit: 'm',
+      asset: { entity: 'pumpstation', id: 6853 },
+      location: 'Polder side',
+      ...
+    },
+    '2cfd26ea-d126-4775-aa3c-e8df3efb3890': {
+      parameter: 'Water level',
+      unit: 'm',
+      asset: { entity: 'pumpstation', id: 6853 },
+      location: 'Canal side',
+      ...
+    }
+  }
 }
 ```
 
 _Intersections_
 
-When you want to show a chart of the polder side water level your app needs to dispatch an `addIntersection` action. An intersection with a timeseries should contain a the timeseries `id` and optionally a time interval you are interested in plus any additional parameters you want to include in the request:
+When you want to show a chart of the polder side water level your app needs to dispatch an `addIntersection` action. An intersection with a timeseries should contain the timeseries `id` and optionally a time interval you are interested in plus any additional parameters you want to include in the request:
 
 ```js
 let whenIntersectionIsAdded = lizard.dispatch(actions.addIntersection('timeseries', {
@@ -156,17 +161,17 @@ let whenIntersectionIsAdded = lizard.dispatch(actions.addIntersection('timeserie
 }))
 ```
 
-By default intersections are not active and have no specified start and end. Intersections can be added with `active: true` and a `spaceTime` object or can be changed by dispatching:
+By default intersections are not active and have no specified start and end. Intersections can be added with `active: true` and a `spaceTime` object or can be changed by dispatching an action:
 
 ```js
-whenIntersectionIsAdded = lizard.dispatch(actions.setIntersectionSpaceTime(0, {
+whenIntersectionIsAdded = lizard.dispatch(actions.setIntersectionSpaceTime('0', {
   start: 1356998400000,
   end: 1482035400000
 }));
-whenIntersectionIsAdded = lizard.dispatch(actions.toggleIntersection(0));
+whenIntersectionIsAdded = lizard.dispatch(actions.toggleIntersection('0'));
 ```
 
-Where `0` is the intersection's index in `lizard.getState().intersections`. If an intersection is active or toggled to active, both actions will fetch timeseries data and return a promise:
+Where `0` is the intersection's key in `lizard.getState().intersections`. Actions to toggle, or update intersections will fetch timeseries data and return a promise:
 
 ```js
 whenIntersectionIsAdded.then(() => lizard.getState());
@@ -175,21 +180,23 @@ Returns:
 
 ```js
 ...
-intersections: [{
-  id: 'e0e59d70-8cc8-45f0-9748-b6b627991e3c',
-  spaceTime: {
-    start: 1356998400000,
-    end: 1482035400000
-  },
-  actvie: true,
-  params: {min_points: 300},
-  events: [
-    {timestamp: 1356998403600, value: 7},
-    {timestamp: 1356998407200, value: 4},
-    ...
-  ]
-}],
-...
+intersections: {
+  0: {
+    type: 'timeseries';
+    id: 'e0e59d70-8cc8-45f0-9748-b6b627991e3c',
+    spaceTime: {
+      start: 1356998400000,
+      end: 1482035400000
+    },
+    actvie: true,
+    params: {min_points: 300},
+    events: [
+      {timestamp: 1356998403600, value: 7},
+      {timestamp: 1356998407200, value: 4},
+      ...
+    ]
+  }
+}
 ```
 Note: the Lizard store contains timeseries metadata in timeseries and timeseries data in intersections. You do not need to have a timeseries metadata object for an intersection.
 
@@ -209,11 +216,15 @@ const store = Lizard({}, myAppEntities);
 To initialize the store with preloaded data, for instance to perform server side hydration, use the first argument:
 
 ```js
-const store = Lizard({assets: [{
-  entity: 'pumpstation',
-  id: 123,
-  name: 'You got to stay hydrated'
-}]});
+const store = Lizard({
+  assets: {
+    pupstation$123: {
+      entity: 'pumpstation',
+      id: 123,
+      name: 'You got to stay hydrated'
+    }
+  }
+});
 ```
 
 # A note on map tiles
@@ -222,24 +233,26 @@ Lizard JavaScript API is meant to query and store Lizard resources in JSON. Liza
 TODO: this route is very implicit, how are outsiders supposed to find out how this works?
 
 # Development
-The generated project includes a development server on port `8080`, which will reload a rebuild version of the library into the browser whenever you change source code. To start the server, run:
+The generated project includes a development server on port `8080` which will reload a rebuild version of the library into the browser whenever you change source code. To start the server and run the test with watch function, run:
 
 ```bash
-$ npm run dev
+$ npm start
 ```
 
-To build for production, this command will output optimized production code:
+To build for production, this command will run the tests and output optimized production code in lib/Lizard.js:
 
 ```bash
-$ npm run build
+$ npm build
 ```
 
-To run the tests:
+To run the tests once:
 ```bash
-$ npm run test
+$ npm test
 ```
 
-Note: `npm run dev` creates a development version of the library in memory, the version on disk in `lib/` is not automatically updated.
+Note: `npm start` creates a development version of the library in memory, the version on disk in `lib/` is not automatically updated.
+
+TODO: the tests run continuously but do not have access to webpacks build version of the library in memory. Therefore the test import `src/`. This is bad practice and something we should fix.
 
 Developer checklist:
 - [ ] Fork/Clone this repo.
@@ -253,7 +266,7 @@ Developer checklist:
 ## TODO:
 As of to date it is only a quarter done.
 
-- [ ] Make tests consistent. Decide on testing source or compiled library.
+- [ ] Test all actions. Currently some action dispatchers and some reducers are tested. We should write more integration-like tests which read like documentation and dispatch every public action possible.
 - [ ] Remove all timeseries of asset when removing asset.
 - [ ] Remove all intersections when raster/eventeries/timeseries are removed.
 - [ ] Include eventseries.
