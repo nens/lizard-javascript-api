@@ -3,6 +3,7 @@ import nock from 'nock';
 import omit from 'lodash/omit';
 
 import Lizard, {actions} from '../src';
+import {baseUrl} from '../src/utils';
 
 chai.expect();
 
@@ -11,6 +12,10 @@ const expect = chai.expect;
 describe('Assets', () => {
 
   describe('When adding an asset', () => {
+    afterEach(() => {
+      nock.cleanAll();
+    });
+
     const store = Lizard();
 
     const ASSET = {
@@ -29,29 +34,35 @@ describe('Assets', () => {
       ]
     };
 
-    nock(ASSET.entity)
-    .get(`/${ASSET.entity}/${ASSET.id}`)
-    .reply(200, { body: RESPONSE});
+    nock(baseUrl)
+    .get(`/api/v2/${ASSET.entity}s/${ASSET.id}`)
+    .reply(200, RESPONSE);
 
     const whenAssetAdded = store.dispatch(
       actions.getAsset(ASSET.entity, ASSET.id)
     );
 
     it('adds an asset synchronously', () => {
-      expect(store.getState().assets[KEY]).to.deep.equal(ASSET);
+      const unsubscribe = store.subscribe(() => {
+        expect(store.getState().assets[KEY]).to.deep.equal(ASSET);
+        unsubscribe();
+      });
     });
 
     it('fetches asset from server', () => {
       const expectedStoreItem = {...ASSET, name: RESPONSE.name};
 
-      whenAssetAdded.then(() => {
+      return whenAssetAdded.then(() => {
         expect(store.getState().assets[KEY]).to.deep.equal(expectedStoreItem);
       });
     });
 
     it('stores timeseries in store.timeseries', () => {
-      whenAssetAdded.then(() => {
-        expect(store.getState().timeseries[TIMESERIES_KEY]).to.deep.equal(omit(RESPONSE.timeseries, 'uuid'));
+      return whenAssetAdded.then(() => {
+        const expected = omit(RESPONSE.timeseries[0], 'uuid');
+
+        expected.asset = KEY;
+        expect(store.getState().timeseries[TIMESERIES_KEY]).to.deep.equal(expected);
       });
     });
 

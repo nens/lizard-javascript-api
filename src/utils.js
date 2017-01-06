@@ -1,9 +1,24 @@
 import 'isomorphic-fetch';
 
+const baseUrl = (() => {
+  let absoluteBase = 'http://demo.lizard.net';
+
+  if (typeof window !== 'undefined') {
+    const protocol = window && window.location.protocol;
+
+    const host = window && window.location.host;
+
+    const port = window && window.location.port;
+
+    absoluteBase = `${protocol}://${host}:${port}`;
+  }
+  return absoluteBase;
+})();
+
 const fetchItem = (entity, id) => {
   const plural = entity + 's';
 
-  const request = new Request(`api/v2/${plural}/${id}`, {
+  const request = new Request(`${baseUrl}/api/v2/${plural}/${id}`, {
     credentials: 'same-origin'
   });
 
@@ -56,4 +71,4 @@ const geomToWkt = (gj) => {
   }
 };
 
-module.exports = { fetchItem, geomToWkt };
+module.exports = { fetchItem, geomToWkt, baseUrl };

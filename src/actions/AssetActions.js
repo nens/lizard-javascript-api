@@ -46,7 +46,6 @@ export const getAsset = (entity, id) => {
       .then(asset => {
         asset.timeseries.forEach(function (ts) {
           ts.asset = `${entity}$${id}`;
-          ts.assetId = id;
         });
         dispatch(addTimeseries(asset.timeseries));
       });

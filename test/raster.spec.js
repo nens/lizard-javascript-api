@@ -1,5 +1,6 @@
 import chai from 'chai';
 import nock from 'nock';
+import {baseUrl} from '../src/utils';
 
 import Lizard, {actions} from '../src';
 
@@ -8,6 +9,10 @@ chai.expect();
 const expect = chai.expect;
 
 describe('Rasters', () => {
+  afterEach(() => {
+    nock.cleanAll();
+  });
+
   const ID = 'e4g5ds6';
 
   const RESPONSE = { name: 'Elevation' };
@@ -15,20 +20,23 @@ describe('Rasters', () => {
   describe('When adding a raster', () => {
     const store = Lizard();
 
-    nock('raster')
-    .get(`/${ID}`)
-    .reply(200, { body: RESPONSE });
+    nock(baseUrl)
+    .get(`/api/v2/rasters/${ID}`)
+    .reply(200, RESPONSE);
 
     const whenRasterAdded = store.dispatch(actions.addRaster(ID));
 
     it('creates raster synchronous', () => {
-      expect(store.getState().rasters[ID]).to.deep.equal({});
+      const unsubscribe = store.subscribe(() => {
+        expect(store.getState().rasters[ID]).to.deep.equal({});
+        unsubscribe();
+      });
     });
 
     it('fetches raster', () => {
-      whenRasterAdded
+      return whenRasterAdded
         .then(() => {
-          expect(store.getState.rasters[ID]).toEqual(RESPONSE);
+          expect(store.getState().rasters[ID]).to.deep.equal(RESPONSE);
         });
     });
 

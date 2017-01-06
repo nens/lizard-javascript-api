@@ -1,12 +1,17 @@
 import chai from 'chai';
+import nock from 'nock';
 
 import Lizard, {actions} from '../src';
+import {baseUrl} from '../src/utils';
 
 chai.expect();
 
 const expect = chai.expect;
 
 describe('Intersections', () => {
+  afterEach(() => {
+    nock.cleanAll();
+  });
 
   describe('When adding a raster intersection', () => {
 
@@ -31,44 +36,43 @@ describe('Intersections', () => {
 
     it('fetches intersection when active', () => {
 
-      // TODO: use nock to check if resource is fetched with geom in WKT and
-      // check if reponse is parsed correctly.
+      const store = Lizard();
 
-      // const store = Lizard();
-      //
-      // const RESPONSE = {
-      //   data: [[0, 3], [2, 4], [4, 1]]
-      // };
-      //
-      // const resource = nock('raster-aggregates')
-      // .get('/')
-      // .reply(200, { body: RESPONSE});
-      //
-      // const ACTIVE_INTERSECTION = {
-      //   typeId: RASTER_ID,
-      //   active: true,
-      //
-      //   spaceTime: {
-      //     geometry: {
-      //       type: 'Point',
-      //       coordinates: [1, 0]
-      //     }
-      //   }
-      // };
-      //
-      // const whenIntersectionFetched = store.dispatch(
-      //   actions.addIntersection(DATA_TYPE, ACTIVE_INTERSECTION)
-      // );
-      //
-      // expect(resource.isDone()).to.be.true;
-      //
-      // whenIntersectionFetched
-      // .then(() => {
-      //   expect(store.getState().intersections[0].data).to.deep.equal(RESPONSE.data);
-      // });
+      const RESPONSE = {
+        data: [[0, 3], [2, 4], [4, 1]]
+      };
+
+      nock(baseUrl)
+      .get('/api/v2/raster-aggregates/?geom=POINT%20(1%200)&srs=EPSG%3A4326&rasters=e4g5ds6')
+      .reply(200, RESPONSE);
+
+      const ACTIVE_INTERSECTION = {
+        typeId: RASTER_ID,
+        active: true,
+
+        spaceTime: {
+          geometry: {
+            type: 'Point',
+            coordinates: [1, 0]
+          }
+        }
+      };
+
+      const whenIntersectionFetched = store.dispatch(
+        actions.addIntersection(DATA_TYPE, ACTIVE_INTERSECTION)
+      );
+
+      return whenIntersectionFetched
+      .then(() => {
+        expect(store.getState().intersections[0].data).to.deep.equal(RESPONSE.data);
+      });
 
     });
 
+  });
+
+  describe('When adding a timeseries intersection', () => {
+    // TODO: implement test specifically for timeseries.
   });
 
 });

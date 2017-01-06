@@ -6,7 +6,7 @@ import {
   TOGGLE_INTERSECTION
 } from '../constants/ActionTypes';
 
-import { geomToWkt } from '../utils';
+import { geomToWkt, baseUrl } from '../utils';
 
 const fetchIntersection = (intersection) => {
 
@@ -45,12 +45,12 @@ const fetchIntersection = (intersection) => {
   // TODO: timeseries data is available under /timeseries/<uuid>, raster data
   // is available under /raster-aggregates/?raster=<uuid>.
   if (intersection.dataType === 'raster') {
-    request = new Request(`api/v2/${plural}/?${query}`, {
+    request = new Request(`${baseUrl}/api/v2/${plural}/?${query}`, {
       credentials: 'same-origin',
       params: params
     });
   } else {
-    request = new Request(`api/v2/${plural}/${intersection.typeId}/?${query}`, {
+    request = new Request(`${baseUrl}/api/v2/${plural}/${intersection.typeId}/?${query}`, {
       credentials: 'same-origin',
       params: params
     });
@@ -59,11 +59,11 @@ const fetchIntersection = (intersection) => {
   return fetch(request).then(response => response.json());
 };
 
-const receiveIntersection = (id, data) => {
+const receiveIntersection = (id, payload) => {
   return {
     type: RECEIVE_INTERSECTION,
     id,
-    data
+    payload
   };
 };
 
