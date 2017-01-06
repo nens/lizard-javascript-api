@@ -155,7 +155,7 @@ _Intersections_
 When you want to show a chart of the polder side water level your app needs to dispatch an `addIntersection` action. An intersection with a timeseries should contain the timeseries `id` and optionally a time interval you are interested in plus any additional parameters you want to include in the request:
 
 ```js
-let whenIntersectionIsAdded = lizard.dispatch(actions.addIntersection('timeseries', {
+const whenIntersectionIsAdded = lizard.dispatch(actions.addIntersection('timeseries', {
   id: 'e0e59d70-8cc8-45f0-9748-b6b627991e3c',
   params: {min_points: 300}
 }))
@@ -188,7 +188,7 @@ intersections: {
       start: 1356998400000,
       end: 1482035400000
     },
-    actvie: true,
+    active: true,
     params: {min_points: 300},
     events: [
       {timestamp: 1356998403600, value: 7},
