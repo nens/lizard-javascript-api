@@ -125,7 +125,7 @@ Returns:
               52.783234489793195,
               0.0
           ]
-      }
+      },
     },
     ...
   }},
@@ -155,7 +155,7 @@ _Intersections_
 When you want to show a chart of the polder side water level your app needs to dispatch an `addIntersection` action. An intersection with a timeseries should contain the timeseries `id` and optionally a time interval you are interested in plus any additional parameters you want to include in the request:
 
 ```js
-const whenIntersectionIsAdded = lizard.dispatch(actions.addIntersection('timeseries', {
+let whenIntersectionIsAdded = lizard.dispatch(actions.addIntersection('timeseries', {
   id: 'e0e59d70-8cc8-45f0-9748-b6b627991e3c',
   params: {min_points: 300}
 }))
@@ -171,7 +171,7 @@ whenIntersectionIsAdded = lizard.dispatch(actions.setIntersectionSpaceTime('0', 
 whenIntersectionIsAdded = lizard.dispatch(actions.toggleIntersection('0'));
 ```
 
-Where `0` is the intersection's key in `lizard.getState().intersections`. Actions to toggle, or update intersections will fetch timeseries data and return a promise:
+Where `0` is the intersection's key in `lizard.getState().intersections`. If an intersection is active or toggled to active, both actions will fetch timeseries data and return a promise:
 
 ```js
 whenIntersectionIsAdded.then(() => lizard.getState());
@@ -188,7 +188,7 @@ intersections: {
       start: 1356998400000,
       end: 1482035400000
     },
-    active: true,
+    actvie: true,
     params: {min_points: 300},
     events: [
       {timestamp: 1356998403600, value: 7},
@@ -226,6 +226,25 @@ const store = Lizard({
   }
 });
 ```
+
+# A real life node example
+Lizard Javascript API uses window.location for its requests. In production this means you either need an instance of the Lizard web API or proxy requests from your server. In development running `npm start` starts a web server which proxies all requests to `http://localhost:8000`. If `window` is unavailable it defaults `http://demo.lizard.net`. In the directory of Lizard JavaScript API try:
+
+Build a compiled version:
+```bash
+node_modules/webpack/bin/webpack.js
+node
+```
+Load public data:
+```js
+var lizard = require('./lib/Lizard').default();
+var actions = require('./lib/Lizard').actions;
+lizard.dispatch(actions.getAsset('measuringstation', 202094));
+lizard.dispatch(actions.addIntersection('timeseries', { typeId: '8f3b0455-d967-40b3-a739-a0a96225d293', spaceTime:{ start: 946252800000, end: 1467504000000 }, params: { min_points: 10 } }));
+lizard.dispatch(actions.toggleIntersection('0'));
+lizard.subscribe(function () { console.log(lizard.getState()) });
+```
+
 
 # A note on map tiles
 Lizard JavaScript API is meant to query and store Lizard resources in JSON. Lizard also makes assets and rasters available as tiled map services through the TMS and WMS protocol. To use these resources in a browser you should use map libraries such as [Leaflet](http://leafletjs.com/) or [Openlayers](https://openlayers.org/).

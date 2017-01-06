@@ -27,7 +27,6 @@
     "redux-mock-store": "^1.2.1",
     "webpack": "1.12.9",
     "webpack-dev-server": "^1.16.2",
-    "whatwg-fetch": "^2.0.1",
     "yargs": "3.32.0"
   },
   "repository": {
