@@ -188,7 +188,7 @@ intersections: {
       start: 1356998400000,
       end: 1482035400000
     },
-    actvie: true,
+    active: true,
     params: {min_points: 300},
     events: [
       {timestamp: 1356998403600, value: 7},
