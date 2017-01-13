@@ -108,13 +108,6 @@ export const removeIntersection = (id) => {
   };
 };
 
-// export const removeIntersectionViaRasterId = (rasterId) => {
-//   return {
-//     type: REMOVE_INTERSECTION_VIA_RASTER_ID,
-//     id: rasterId
-//   };
-// }
-
 export const setGeometryToIntersection = (index, geometry) => {
 
 };
