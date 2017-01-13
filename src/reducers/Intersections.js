@@ -1,5 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import omit from 'lodash/omit';
+import forEach from 'lodash/forEach';
+
 
 let defaultState = {};
 
@@ -9,6 +11,8 @@ let newIntersection = {};
 
 let newState = {};
 
+let intersectionId;
+
 export default function (state = defaultState, action) {
   switch (action.type) {
     case ActionTypes.ADD_INTERSECTION_SYNC:
@@ -17,6 +21,24 @@ export default function (state = defaultState, action) {
       return newState;
     case ActionTypes.REMOVE_INTERSECTION:
       return omit(state, action.id);
+    case ActionTypes.REMOVE_RASTER:
+      newState = {...state};
+      forEach(newState, (intersection, k) => {
+        if (intersection.typeId === action.id) {
+          intersectionId = k;
+        }
+      })
+      delete newState[intersectionId];
+      return newState;
+    case ActionTypes.REMOVE_TIMESERIES:
+      newState = {...state};
+      forEach(newState, (intersection, k) => {
+        if (intersection.typeId === action.uuid) {
+          intersectionId = k;
+        }
+      })
+      delete newState[intersectionId];
+      return newState;
     case ActionTypes.RECEIVE_INTERSECTION:
       intersection = state[action.id];
 

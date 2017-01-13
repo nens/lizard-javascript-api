@@ -5,19 +5,25 @@ const baseUrl = (() => {
 
   if (typeof window !== 'undefined') {
     const protocol = window && window.location.protocol;
-
-    const host = window && window.location.host;
-
+    const hostname = window && window.location.hostname;
     const port = window && window.location.port;
 
-    absoluteBase = `${protocol}://${host}:${port}`;
+    absoluteBase = `${protocol}://${hostname}:${port}`;
   }
   return absoluteBase;
 })();
 
+// Polymorphic length: works for both JS objects and JS arrays.
+const len = (collection) => {
+  if (typeof collection === typeof {}) {
+    return Object.keys(collection).length;
+  } else if (typeof collection === typeof []) {
+    return collection.length;
+  }
+};
+
 const fetchItem = (entity, id) => {
   const plural = entity + 's';
-
   const request = new Request(`${baseUrl}/api/v2/${plural}/${id}`, {
     credentials: 'same-origin'
   });
@@ -71,4 +77,4 @@ const geomToWkt = (gj) => {
   }
 };
 
-module.exports = { fetchItem, geomToWkt, baseUrl };
+module.exports = { fetchItem, geomToWkt, baseUrl, len };

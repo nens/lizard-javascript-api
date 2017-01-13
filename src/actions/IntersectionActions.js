@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import forEach from 'lodash/forEach'
 
 import {
   ADD_INTERSECTION_SYNC,
@@ -106,6 +107,13 @@ export const removeIntersection = (id) => {
     id
   };
 };
+
+// export const removeIntersectionViaRasterId = (rasterId) => {
+//   return {
+//     type: REMOVE_INTERSECTION_VIA_RASTER_ID,
+//     id: rasterId
+//   };
+// }
 
 export const setGeometryToIntersection = (index, geometry) => {
 
