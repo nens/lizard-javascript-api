@@ -6,7 +6,7 @@ let newState = {};
 export default function (state = defaultState, action) {
 
   switch (action.type) {
-    case ActionTypes.ADD_EVENTSERIES:
+    case ActionTypes.ADD_EVENTSERIES_SYNC:
       newState = {...state};
       newState[action.uuid] = {};
       return newState;

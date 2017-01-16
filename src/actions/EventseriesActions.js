@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch';
 import {
   RECEIVE_EVENTSERIES,
   REMOVE_EVENTSERIES,
-  ADD_EVENTSERIES
+  ADD_EVENTSERIES_SYNC
 } from '../constants/ActionTypes';
 
 import { baseUrl } from '../utils';
@@ -28,7 +28,7 @@ const _receiveEventseries = (uuid, apiResponse) => {
 
 const addEventseriesSync = (uuid) => {
   return {
-    type: ADD_EVENTSERIES,
+    type: ADD_EVENTSERIES_SYNC,
     uuid
   };
 
