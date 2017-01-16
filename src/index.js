@@ -1,3 +1,6 @@
+import 'es6-promise';
+import 'isomorphic-fetch';
+
 import configureStore from './store/configureStore';
 import * as actions from './actions';
 
