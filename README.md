@@ -103,7 +103,7 @@ const showPumpstation => (pumpstationResponse) { 'your entry point to show the u
 
 const apologizeToUser => (error) { 'No pumpstation for you my friend' };
 
-whenLizardPumpstationAdded.then(showPumpstation, apologizeToUser);   
+whenLizardPumpstationAdded.then(showPumpstation, apologizeToUser);
 ```
 
 Note: When you subscribe to lizard, you subscribe to all changes to the store. So when calling `addPumpstation` your callback will be called at least twice. To stop listening to lizard changes, call the returned function `unsubscribe()`.
@@ -295,9 +295,10 @@ Developer checklist:
 As of to date it is only a quarter done.
 
 - [ ] Test all actions. Currently some action dispatchers and some reducers are tested. We should write more integration-like tests which read like documentation and dispatch every public action possible.
-- [ ] Remove all timeseries of asset when removing asset.
-- [ ] Remove all intersections when raster/eventeries/timeseries are removed.
-- [ ] Include eventseries.
+- [x] Remove all timeseries of asset when removing asset.
+- [x] Remove all intersections when raster/timeseries are removed.
+- [x] Include eventseries.
+- [ ] Remove all intersections when eventeries are removed.
 - [ ] Check user input. Currently an action payload is passed all the way through without ever checking what is inside. Throw errors.
 - [ ] Throw errors and call error callbacks when request goes bad or response is malformed.
 - [ ] Cancel requests when no longer relevant.

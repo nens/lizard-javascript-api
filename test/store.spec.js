@@ -16,7 +16,8 @@ describe('Given a default Lizard store', function () {
         assets: {},
         intersections: {},
         timeseries: {},
-        rasters: {}
+        rasters: {},
+        eventseries: {}
       });
     });
   });

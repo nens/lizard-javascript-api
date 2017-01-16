@@ -112,8 +112,8 @@ describe('Assets', () => {
       });
 
       it('removes all associated timeseries synchronously', () => {
-        // const EXPECTED_TIMESERIES = { '76ghju1se3': WEIR_TIMESERIES };
-        // expect(store.getState().timeseries).to.deep.equal(EXPECTED_TIMESERIES);
+        const EXPECTED_TIMESERIES = { '76ghju1se3': WEIR_TIMESERIES };
+        return expect(store.getState().timeseries).to.deep.equal(EXPECTED_TIMESERIES);
       });
 
     });

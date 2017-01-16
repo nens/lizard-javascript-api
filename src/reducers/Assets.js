@@ -20,9 +20,7 @@ export default function (state = defaultState, action) {
       return omit(state, `${action.entity}$${action.id}`);
     case ActionTypes.RECEIVE_ASSET:
       const key = `${action.entity}$${action.id}`;
-
       const asset = state[key];
-
       const newAsset = {...asset};
 
       Object.assign(newAsset, omit(action.data, 'timeseries'));

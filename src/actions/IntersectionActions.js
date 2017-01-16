@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import forEach from 'lodash/forEach'
+// import forEach from 'lodash/forEach'
 
 import {
   ADD_INTERSECTION_SYNC,
@@ -51,6 +51,10 @@ const fetchIntersection = (intersection) => {
     request = new Request(`${baseUrl}/api/v2/${plural}/?${query}`, {
       credentials: 'same-origin',
       params: params
+    });
+  } else if (intersection.dataType === 'eventseries') {
+    request = new Request(`${baseUrl}/api/v2/events/?eventseries=${intersection.typeId}`, {
+      credentials: 'same-origin'
     });
   } else {
     request = new Request(`${baseUrl}/api/v2/${plural}/${intersection.typeId}/?${query}`, {

@@ -433,7 +433,8 @@ describe('Intersections', () => {
           asset: 'pumpstation$6853'
         }
       },
-      rasters: {}
+      rasters: {},
+      eventseries: {}
     }
 
     const store = Lizard(initialState);
@@ -447,6 +448,79 @@ describe('Intersections', () => {
 
       // We check whether the intersection has been thrown away:
       equal(0, len(store.getState().intersections));
+    });
+  });
+
+  describe('When adding a eventseries intersection', () => {
+
+    const DATA_TYPE = 'eventseries'
+    const UUID = 'e89e83d8-f356-4eb9-98c8-8adc7d6582e9';
+    const geom = { type: 'Point', coordinates: [0, 1] };
+
+    it('adds an intersection synchronously', () => {
+
+      const store = Lizard();
+      const intersection = { typeId: UUID};
+      const expected = {...intersection, dataType: DATA_TYPE};
+
+      store.dispatch(
+        actions.addIntersection(DATA_TYPE, intersection)
+      );
+      equal(store.getState().intersections[0], expected);
+    });
+
+    it('fetches intersection data when active=true', () => {
+
+      const store = Lizard();
+      const response = { data: [[0, 3], [2, 4], [4, 1]] };
+      const intersection = {
+        typeId: UUID,
+        active: true,
+        spaceTime: {
+          geometry: {
+            type: 'Point',
+            coordinates: [1, 0]
+          }
+        }
+      };
+
+      fock(response);
+
+      const whenIntersectionFetched = store.dispatch(
+        actions.addIntersection(DATA_TYPE, intersection)
+      );
+
+      return whenIntersectionFetched.then(() => {
+        const expected = {...intersection, dataType: DATA_TYPE, data: response.data};
+        return equal(store.getState().intersections[0], expected);
+      });
+    });
+
+    it('not fetches intersection data when active=false', () => {
+
+      const store = Lizard();
+      const response = { data: [[0, 3], [2, 4], [4, 1]] };
+      const intersection = {
+        typeId: UUID,
+        active: false,
+        spaceTime: {
+          geometry: {
+            type: 'Point',
+            coordinates: [1, 0]
+          }
+        }
+      };
+
+      fock(response);
+
+      const whenIntersectionFetched = store.dispatch(
+        actions.addIntersection(DATA_TYPE, intersection)
+      );
+
+      return whenIntersectionFetched.then(() => {
+        const expected = {...intersection, dataType: DATA_TYPE};
+        equal(store.getState().intersections[0], expected);
+      });
     });
   });
 });
