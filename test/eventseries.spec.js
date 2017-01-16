@@ -40,8 +40,10 @@ describe('Eventseries', () => {
       fock(expected);
 
       const whenEventseriesAdded = store.dispatch(actions.addEventseries(UUID));
-      // Before the promise resolves, we don't have any eventseries:
-      equal(0, len(store.getState().eventseries));
+      // When adding an eventseries, the (eventseries) store gets updated
+      // in-sync with a single key-value pair: key=UUID, value=undefined
+      equal(1, len(store.getState().eventseries));
+      equal({}, store.getState().eventseries[UUID]);
 
       whenEventseriesAdded.then(() => {
         return equal(expected, store.getState().eventseries)

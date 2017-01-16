@@ -2,7 +2,8 @@ import fetch from 'isomorphic-fetch';
 
 import {
   RECEIVE_EVENTSERIES,
-  REMOVE_EVENTSERIES
+  REMOVE_EVENTSERIES,
+  ADD_EVENTSERIES
 } from '../constants/ActionTypes';
 
 import { baseUrl } from '../utils';
@@ -25,8 +26,17 @@ const _receiveEventseries = (uuid, apiResponse) => {
   };
 };
 
+const addEventseriesSync = (uuid) => {
+  return {
+    type: ADD_EVENTSERIES,
+    uuid
+  };
+
+};
+
 export const addEventseries = (uuid) => {
   return function (dispatch) {
+    dispatch(addEventseriesSync(uuid));
     return _fetchEventseries(uuid).then(apiResponse => {
       dispatch(_receiveEventseries(uuid, apiResponse));
     });
