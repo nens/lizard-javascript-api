@@ -1,4 +1,9 @@
-import { ADD_RASTER_SYNC, RECEIVE_RASTER, REMOVE_RASTER } from '../constants/ActionTypes';
+import {
+  ADD_RASTER_SYNC,
+  RECEIVE_RASTER_SUCCESS,
+  RECEIVE_RASTER_FAILURE,
+  REMOVE_RASTER
+} from '../constants/ActionTypes';
 
 import { fetchItem } from '../utils';
 
@@ -9,18 +14,26 @@ export const addRasterSync = (id) => {
   };
 };
 
+const receiveRasterSuccess = (id, data) => {
+  return {
+    type: RECEIVE_RASTER_SUCCESS,
+    id,
+    data
+  };
+};
+
+const receiveRasterFailure = (id, error) => {
+  return {
+    type: RECEIVE_RASTER_FAILURE,
+    id,
+    error
+  };
+};
+
 export const removeRaster = (id) => {
   return {
     type: REMOVE_RASTER,
     id
-  };
-};
-
-const receiveRaster = (id, data) => {
-  return {
-    type: RECEIVE_RASTER,
-    id,
-    data
   };
 };
 
@@ -29,9 +42,10 @@ export const addRaster = (id) => {
     dispatch(addRasterSync(id));
     return fetchItem('raster', id)
       .then(data => {
-        dispatch(receiveRaster(id, data));
+        dispatch(receiveRasterSuccess(id, data));
         return data;
-      }
-    );
+      }).catch(errorObject => {
+        dispatch(receiveRasterFailure(id, errorObject.toString()));
+      });
   };
 };

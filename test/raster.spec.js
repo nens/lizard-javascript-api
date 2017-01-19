@@ -1,56 +1,68 @@
-import chai from 'chai';
 import nock from 'nock';
-import {baseUrl} from '../src/utils';
+import omit from 'lodash/omit';
 
-import Lizard, {actions} from '../src';
-
-chai.expect();
-
-const expect = chai.expect;
+import { baseUrl } from '../src/utils';
+import Lizard, { actions } from '../src';
+import { equal, unequal, fock } from './test-utils';
 
 describe('Rasters', () => {
+
   afterEach(() => {
     nock.cleanAll();
   });
 
   const ID = 'e4g5ds6';
-
-  const RESPONSE = { name: 'Elevation' };
+  const response = { name: 'Elevation' };
 
   describe('When adding a raster', () => {
+
+    fock(response);
     const store = Lizard();
-
-    nock(baseUrl)
-    .get(`/api/v2/rasters/${ID}`)
-    .reply(200, RESPONSE);
-
     const whenRasterAdded = store.dispatch(actions.addRaster(ID));
 
-    it('creates raster synchronous', () => {
-      const unsubscribe = store.subscribe(() => {
-        expect(store.getState().rasters[ID]).to.deep.equal({});
-        unsubscribe();
-      });
+    it('creates the state.rasters[id] object (in-sync)', () => {
+      equal(store.getState().rasters.hasOwnProperty(ID), true);
+      equal(store.getState().rasters.error, false);
     });
-
-    it('fetches raster', () => {
-      return whenRasterAdded
-        .then(() => {
-          expect(store.getState().rasters[ID]).to.deep.equal(RESPONSE);
-        });
-    });
-
   });
 
+  describe('When adding a raster with an correct ID', () => {
+
+    fock(response);
+    const store = Lizard();
+    const whenRasterAdded = store.dispatch(actions.addRaster(ID));
+
+    it('fetches raster data (a-sync)', () => {
+      return whenRasterAdded
+        .then(() => { equal(store.getState().rasters[ID], response) });
+    });
+
+    it('does not raise an error (a-sync)', () => {
+      return whenRasterAdded
+        .then(() => { equal(store.getState().rasters.error, false) });
+    })
+  });
+
+  // describe('When adding a raster with an unknown ID', () => {
+  //   // TODO..
+  //   it('does not fetch raster data (a-sync) ...WIP', () => {
+
+  //   });
+  // });
+
   describe('When having rasters', () => {
-    const INITIAL = {
-      'e4g5ds6': RESPONSE,
-      'otherRaster': { name: 'remove me' }
+
+    const initialRasters = {
+      'e4g5ds6': response,
+      'otherRaster': { name: 'remove me' },
+      'error': false
     };
+    const store = Lizard({ rasters: initialRasters });
+    // store.rasters = initialRasters;
 
-    const store = Lizard({rasters: INITIAL});
-
-    store.dispatch(actions.removeRaster('otherRaster'));
-    expect(store.getState().rasters).to.deep.equal({'e4g5ds6': RESPONSE});
+    it('is possible to delete a specific one (in-sync)', () => {
+      store.dispatch(actions.removeRaster('otherRaster'));
+      equal(store.getState().rasters, omit(initialRasters, 'otherRaster'));
+    });
   });
 });

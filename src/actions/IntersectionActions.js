@@ -4,64 +4,72 @@ import fetch from 'isomorphic-fetch';
 import {
   ADD_INTERSECTION_SYNC,
   RECEIVE_INTERSECTION,
+  RECEIVE_INTERSECTION_ERROR,
   REMOVE_INTERSECTION,
   SET_INTERSECTION_SPACE_TIME,
   TOGGLE_INTERSECTION
 } from '../constants/ActionTypes';
 
-import { geomToWkt, baseUrl } from '../utils';
+import { geomToWkt, baseUrl, paramsToQuery } from '../utils';
 
-const fetchIntersection = (intersection) => {
-
-  const params = {...intersection.params};
-
-  if (intersection.spaceTime.start && intersection.spaceTime.end) {
-    params.start = intersection.spaceTime.start;
-    params.end = intersection.spaceTime.end;
-  } else if (intersection.spaceTime.time) {
-    params.time = intersection.spaceTime.time;
+const getEndpointName = (dataType) => {
+  switch (dataType) {
+    case 'raster':
+      return 'raster-aggregates';
+    case 'eventseries':
+      return 'events';
   }
-  if (intersection.spaceTime.geometry) {
-    params.geom = geomToWkt(intersection.spaceTime.geometry);
+};
+
+const updateParamsForSpaceTime = (initialParams, spaceTime) => {
+  const params = { ...initialParams };
+
+  if (spaceTime.start && spaceTime.end) {
+    params.start = spaceTime.start;
+    params.end = spaceTime.end;
+  } else if (spaceTime.time) {
+    params.time = spaceTime.time;
+  }
+  if (spaceTime.geometry) {
+    params.geom = geomToWkt(spaceTime.geometry);
     params.srs = 'EPSG:4326';
   }
+  return params;
+};
 
-  let plural = intersection.dataType === 'timeseries' ?
-  'timeseries' :
-  intersection.type + 's';
+const updateParamsForDataType = (initialParams, dataType, typeId) => {
+  const params = { ...initialParams };
 
-  // TODO: we don't need the following crap, but raster data is different from
-  // timeseries, is different from eventseries.
-  if (intersection.dataType === 'raster') {
-    plural = 'raster-aggregates';
-    params.rasters = intersection.typeId;
+  if (dataType === 'raster') {
+    params.rasters = typeId;
+  } else if (dataType === 'eventseries') {
+    params.eventseries = typeId;
   }
+  return params;
+};
 
-  const esc = encodeURIComponent;
+const fetchIntersection = (intersection) => {
+  let params = {...intersection.params};
+  let { spaceTime, dataType, typeId } = intersection;
+  let url;
 
-  const query = Object.keys(params)
-    .map(k => esc(k) + '=' + esc(params[k]))
-    .join('&');
+  params = updateParamsForSpaceTime(params, spaceTime);
+  params = updateParamsForDataType(params, dataType, typeId);
 
-  let request;
+  const query = paramsToQuery(params);
 
   // TODO: timeseries data is available under /timeseries/<uuid>, raster data
   // is available under /raster-aggregates/?raster=<uuid>.
-  if (intersection.dataType === 'raster') {
-    request = new Request(`${baseUrl}/api/v2/${plural}/?${query}`, {
-      credentials: 'same-origin',
-      params: params
-    });
-  } else if (intersection.dataType === 'eventseries') {
-    request = new Request(`${baseUrl}/api/v2/events/?eventseries=${intersection.typeId}`, {
-      credentials: 'same-origin'
-    });
+  if (intersection.dataType === 'timeseries') {
+    url = `${baseUrl}/api/v2/timeseries/${intersection.typeId}/?${query}`;
   } else {
-    request = new Request(`${baseUrl}/api/v2/${plural}/${intersection.typeId}/?${query}`, {
-      credentials: 'same-origin',
-      params: params
-    });
+    url = `${baseUrl}/api/v2/${getEndpointName(dataType)}/?${query}`;
   }
+
+  // TODO: Why pass 'params' to server when same info is contained in the query
+  // part of the URL? I think passing this is actually redundant, probably it's
+  // only needed for POST requests, not GET? Discuss/read_moar...
+  let request = new Request(url, {credentials: 'same-origin', params: params });
 
   return fetch(request).then(response => response.json());
 };
@@ -69,6 +77,14 @@ const fetchIntersection = (intersection) => {
 const receiveIntersection = (id, payload) => {
   return {
     type: RECEIVE_INTERSECTION,
+    id,
+    payload
+  };
+};
+
+const receiveIntersectionError = (id, payload) => {
+  return {
+    type: RECEIVE_INTERSECTION_ERROR,
     id,
     payload
   };
@@ -110,10 +126,6 @@ export const removeIntersection = (id) => {
     type: REMOVE_INTERSECTION,
     id
   };
-};
-
-export const setGeometryToIntersection = (index, geometry) => {
-
 };
 
 const toggleIntersectionSync = (id) => {

@@ -5,8 +5,12 @@ import { baseUrl } from '../src/utils';
 ///////////////////////////////////////////////////////////////////////////////
 // Short-hand for comparing two results when testing:
 
-const equal = (a, b) => {
+export const equal = (a, b) => {
   return chai.expect(a).to.deep.equal(b);
+};
+
+export const unequal = (a, b) => {
+  return chai.expect(a).to.not.deep.equal(b);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,11 +29,9 @@ const equal = (a, b) => {
 // Although any HTTP server will consider these two URIs equal, nock doesn't.
 // With this wrapper the problem is solved.
 
-const fock = (response) => {
+export const fock = (response, port = 200) => {
   nock(baseUrl)
     .filteringPath((path) => '/watevar' )
     .get('/watevar')
-    .reply(200, response);
+    .reply(port, response)
 };
-
-module.exports = { equal, fock };

@@ -13,22 +13,44 @@ const baseUrl = (() => {
   return absoluteBase;
 })();
 
-// Polymorphic length: works for both JS objects and JS arrays.
-const len = (collection) => {
-  if (typeof collection === typeof {}) {
-    return Object.keys(collection).length;
-  } else if (typeof collection === typeof []) {
-    return collection.length;
+const paramsToQuery = (params) => {
+  const esc = encodeURIComponent;
+
+  return Object.keys(params)
+    .map(k => esc(k) + '=' + esc(params[k]))
+    .join('&');
+};
+
+const getPlural = (entity) => {
+  switch (entity) {
+    case 'eventseries':
+      return entity;
+    case 'timeseries':
+      return entity;
+    default:
+      return entity + 's';
   }
 };
 
 const fetchItem = (entity, id) => {
-  const plural = entity + 's';
-  const request = new Request(`${baseUrl}/api/v2/${plural}/${id}`, {
-    credentials: 'same-origin'
-  });
+  const plural = getPlural(entity);
+  const url = `${baseUrl}/api/v2/${plural}/${id}`;
+  const request = new Request(url, { credentials: 'same-origin' });
 
-  return fetch(request).then(response => response.json());
+  return fetch(request).then(response => {
+    if (!response.ok) {
+      throw Error(response.status);
+    }
+    return response.json();
+  });
+};
+
+const handleReceiveError = (action, state) => {
+  // TODO: do something more refined than print error!
+  console.log('\n********************************************\n');
+  console.log('Error when getting data from API:\n');
+  console.log(JSON.stringify(action));
+  console.log('\n********************************************\n');
 };
 
 /**
@@ -77,4 +99,4 @@ const geomToWkt = (gj) => {
   }
 };
 
-module.exports = { fetchItem, geomToWkt, baseUrl, len };
+module.exports = { fetchItem, geomToWkt, baseUrl, paramsToQuery, handleReceiveError };

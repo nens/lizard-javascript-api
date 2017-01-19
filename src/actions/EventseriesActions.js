@@ -1,45 +1,32 @@
-import fetch from 'isomorphic-fetch';
-
 import {
-  RECEIVE_EVENTSERIES,
-  REMOVE_EVENTSERIES,
-  ADD_EVENTSERIES_SYNC
+  ADD_EVENTSERIES_SYNC,
+  RECEIVE_EVENTSERIES_SUCCESS,
+  RECEIVE_EVENTSERIES_FAILURE,
+  REMOVE_EVENTSERIES
 } from '../constants/ActionTypes';
 
-import { baseUrl } from '../utils';
-
-const _fetchEventseries = (uuid) => {
-  const request = new Request(`${baseUrl}/api/v2/eventseries/${uuid}/`, {
-    credentials: 'same-origin'
-  });
-
-  return fetch(request).then(response => {
-    return response.json();
-  });
-};
-
-const _receiveEventseries = (uuid, apiResponse) => {
-  return {
-    type: RECEIVE_EVENTSERIES,
-    uuid,
-    ...apiResponse
-  };
-};
+import { fetchItem } from '../utils';
 
 const addEventseriesSync = (uuid) => {
   return {
     type: ADD_EVENTSERIES_SYNC,
     uuid
   };
-
 };
 
-export const addEventseries = (uuid) => {
-  return function (dispatch) {
-    dispatch(addEventseriesSync(uuid));
-    return _fetchEventseries(uuid).then(apiResponse => {
-      dispatch(_receiveEventseries(uuid, apiResponse));
-    });
+const receiveEventseriesSuccess = (uuid, data) => {
+  return {
+    type: RECEIVE_EVENTSERIES_SUCCESS,
+    uuid,
+    data
+  };
+};
+
+const receiveEventseriesFailure = (uuid, error) => {
+  return {
+    type: RECEIVE_EVENTSERIES_FAILURE,
+    uuid,
+    error
   };
 };
 
@@ -47,6 +34,19 @@ export const removeEventseries = (uuid) => {
   return {
     type: REMOVE_EVENTSERIES,
     uuid
+  };
+};
+
+export const addEventseries = (uuid) => {
+  return function (dispatch) {
+    dispatch(addEventseriesSync(uuid));
+    return fetchItem('eventseries', uuid)
+      .then(eventseries => {
+        dispatch(receiveEventseriesSuccess(uuid, eventseries));
+        return eventseries;
+      }).catch(errorObject => {
+        dispatch(receiveEventseriesFailure(uuid, errorObject.toString()));
+      });
   };
 };
 

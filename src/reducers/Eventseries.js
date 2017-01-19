@@ -1,21 +1,26 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { handleReceiveError } from '../utils';
 
 let defaultState = {};
-let newState = {};
 
-export default function (state = defaultState, action) {
+export default (state = defaultState, action) => {
+
+  let newState = { ...state };
 
   switch (action.type) {
     case ActionTypes.ADD_EVENTSERIES_SYNC:
-      newState = {...state};
+      newState.error = false;
       newState[action.uuid] = {};
       return newState;
-    case ActionTypes.RECEIVE_EVENTSERIES:
-      newState = {...state};
-      newState[action.uuid] = action[action.uuid];
+    case ActionTypes.RECEIVE_EVENTSERIES_SUCCESS:
+      newState.error = false;
+      newState[action.uuid] = action.data;
+      return newState;
+    case ActionTypes.RECEIVE_EVENTSERIES_FAILURE:
+      newState.error = action.error;
+      handleReceiveError(action);
       return newState;
     case ActionTypes.REMOVE_EVENTSERIES:
-      newState = {...state};
       delete newState[action.uuid];
       return newState;
     default:
