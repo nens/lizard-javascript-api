@@ -1,3 +1,6 @@
+
+// Import promise polyfill and fetch polyfill for browser and node. Onwards
+// fetch is available as a global both in node and browser.
 import 'es6-promise';
 import 'isomorphic-fetch';
 

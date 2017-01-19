@@ -1,5 +1,3 @@
-import fetch from 'isomorphic-fetch';
-
 const baseUrl = (() => {
   let absoluteBase = 'http://demo.lizard.net';
 

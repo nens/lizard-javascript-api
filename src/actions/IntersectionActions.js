@@ -1,5 +1,3 @@
-import fetch from 'isomorphic-fetch';
-
 import {
   ADD_INTERSECTION_SYNC,
   RECEIVE_INTERSECTION,
