@@ -12,11 +12,13 @@ describe('Given a default Lizard store', function () {
 
   describe('when I call getState', function () {
     it('should return the empty state', () => {
+
       expect(l.getState()).to.deep.equal({
         assets: {},
         intersections: {},
         timeseries: {},
-        rasters: {}
+        rasters: {},
+        eventseries: {}
       });
     });
   });

@@ -1,6 +1,7 @@
 import {
   ADD_ASSET_SYNC,
-  RECEIVE_ASSET,
+  RECEIVE_ASSET_SUCCESS,
+  RECEIVE_ASSET_FAILURE,
   REMOVE_ASSET
 } from '../constants/ActionTypes';
 
@@ -16,12 +17,21 @@ const addAssetSync = (entity, id) => {
   };
 };
 
-const receiveAsset = (entity, id, data) => {
+const receiveAssetSuccess = (entity, id, data) => {
   return {
-    type: RECEIVE_ASSET,
+    type: RECEIVE_ASSET_SUCCESS,
     entity,
     id,
     data
+  };
+};
+
+const receiveAssetFailure = (entity, id, error) => {
+  return {
+    type: RECEIVE_ASSET_FAILURE,
+    entity,
+    id,
+    error
   };
 };
 
@@ -35,19 +45,18 @@ export const removeAsset = (entity, id) => {
 
 export const getAsset = (entity, id) => {
   return function (dispatch) {
-
     dispatch(addAssetSync(entity, id));
-
     return fetchItem(entity, id)
-      .then(asset => {
-        dispatch(receiveAsset(entity, id, asset));
-        return asset;
-      })
       .then(asset => {
         asset.timeseries.forEach(function (ts) {
           ts.asset = `${entity}$${id}`;
         });
+        dispatch(receiveAssetSuccess(entity, id, asset));
         dispatch(addTimeseries(asset.timeseries));
+        return asset;
+      })
+      .catch(errorObject => {
+        dispatch(receiveAssetFailure(entity, id, errorObject.toString()));
       });
   };
 };

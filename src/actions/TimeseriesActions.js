@@ -1,4 +1,8 @@
-import { ADD_TIMESERIES, ADD_SINGLE_TIMESERIES } from '../constants/ActionTypes';
+import {
+  ADD_TIMESERIES,
+  ADD_SINGLE_TIMESERIES,
+  REMOVE_TIMESERIES
+} from '../constants/ActionTypes';
 
 export const addSingleTimeries = (timeseries) => {
   return {
@@ -13,3 +17,11 @@ export const addTimeseries = (timeseries) => {
     timeseries
   };
 };
+
+export const removeTimeseries = (uuid) => {
+  return {
+    type: REMOVE_TIMESERIES,
+    uuid
+  };
+};
+

@@ -5,24 +5,52 @@ const baseUrl = (() => {
 
   if (typeof window !== 'undefined') {
     const protocol = window && window.location.protocol;
-
-    const host = window && window.location.host;
-
+    const hostname = window && window.location.hostname;
     const port = window && window.location.port;
 
-    absoluteBase = `${protocol}://${host}:${port}`;
+    absoluteBase = `${protocol}://${hostname}:${port}`;
   }
   return absoluteBase;
 })();
 
+const paramsToQuery = (params) => {
+  const esc = encodeURIComponent;
+
+  return Object.keys(params)
+    .map(k => esc(k) + '=' + esc(params[k]))
+    .join('&');
+};
+
+const getPlural = (entity) => {
+  switch (entity) {
+    case 'eventseries':
+      return entity;
+    case 'timeseries':
+      return entity;
+    default:
+      return entity + 's';
+  }
+};
+
 const fetchItem = (entity, id) => {
-  const plural = entity + 's';
+  const plural = getPlural(entity);
+  const url = `${baseUrl}/api/v2/${plural}/${id}`;
+  const request = new Request(url, { credentials: 'same-origin' });
 
-  const request = new Request(`${baseUrl}/api/v2/${plural}/${id}`, {
-    credentials: 'same-origin'
+  return fetch(request).then(response => {
+    if (!response.ok) {
+      throw Error(response.status);
+    }
+    return response.json();
   });
+};
 
-  return fetch(request).then(response => response.json());
+const handleReceiveError = (action, state) => {
+  // TODO: do something more refined than print error!
+  console.log('\n********************************************\n');
+  console.log('Error when getting data from API:\n');
+  console.log(JSON.stringify(action));
+  console.log('\n********************************************\n');
 };
 
 /**
@@ -71,4 +99,4 @@ const geomToWkt = (gj) => {
   }
 };
 
-module.exports = { fetchItem, geomToWkt, baseUrl };
+module.exports = { fetchItem, geomToWkt, baseUrl, paramsToQuery, handleReceiveError };
