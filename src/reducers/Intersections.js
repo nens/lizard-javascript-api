@@ -21,8 +21,10 @@ const removeRelatedIntersections = (state, id) => {
 export default (state = defaultState, action) => {
   switch (action.type) {
     case ActionTypes.ADD_INTERSECTION_SYNC:
+      const id = Object.keys(state).length;
+
       newState = { ...state };
-      newState[action.id] = omit(action, 'id', 'type');
+      newState[id] = omit(action, 'id', 'type');
       return newState;
     case ActionTypes.REMOVE_INTERSECTION:
       return omit(state, action.id);

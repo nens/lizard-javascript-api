@@ -1,50 +1,3 @@
-import fetch from 'isomorphic-fetch';
-
-const baseUrl = (() => {
-  let absoluteBase = 'http://demo.lizard.net';
-
-  if (typeof window !== 'undefined') {
-    const protocol = window && window.location.protocol;
-    const hostname = window && window.location.hostname;
-    const port = window && window.location.port;
-
-    absoluteBase = `${protocol}://${hostname}:${port}`;
-  }
-  return absoluteBase;
-})();
-
-const paramsToQuery = (params) => {
-  const esc = encodeURIComponent;
-
-  return Object.keys(params)
-    .map(k => esc(k) + '=' + esc(params[k]))
-    .join('&');
-};
-
-const getPlural = (entity) => {
-  switch (entity) {
-    case 'eventseries':
-      return entity;
-    case 'timeseries':
-      return entity;
-    default:
-      return entity + 's';
-  }
-};
-
-const fetchItem = (entity, id) => {
-  const plural = getPlural(entity);
-  const url = `${baseUrl}/api/v2/${plural}/${id}`;
-  const request = new Request(url, { credentials: 'same-origin' });
-
-  return fetch(request).then(response => {
-    if (!response.ok) {
-      throw Error(response.status);
-    }
-    return response.json();
-  });
-};
-
 const handleReceiveError = (action, state) => {
   // TODO: do something more refined than print error!
   console.log('\n********************************************\n');
@@ -99,4 +52,4 @@ const geomToWkt = (gj) => {
   }
 };
 
-module.exports = { fetchItem, geomToWkt, baseUrl, paramsToQuery, handleReceiveError };
+module.exports = { geomToWkt, handleReceiveError };
