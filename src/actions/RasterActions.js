@@ -5,30 +5,18 @@ import {
   REMOVE_RASTER
 } from '../constants/ActionTypes';
 
-import { fetchItem } from '../utils';
+import { CALL_API } from '../middleware/api';
+import { handleReceiveError } from '../utils';
 
-export const addRasterSync = (id) => {
-  return {
-    type: ADD_RASTER_SYNC,
+// Fetches a single raster from Lizard API.
+// Relies on the custom API middleware defined in ../middleware/api.js.
+const fetchRaster = (id) => ({
+  [CALL_API]: {
+    types: [ ADD_RASTER_SYNC, RECEIVE_RASTER_SUCCESS, RECEIVE_RASTER_FAILURE ],
+    entity: 'raster',
     id
-  };
-};
-
-const receiveRasterSuccess = (id, data) => {
-  return {
-    type: RECEIVE_RASTER_SUCCESS,
-    id,
-    data
-  };
-};
-
-const receiveRasterFailure = (id, error) => {
-  return {
-    type: RECEIVE_RASTER_FAILURE,
-    id,
-    error
-  };
-};
+  }
+});
 
 export const removeRaster = (id) => {
   return {
@@ -39,13 +27,9 @@ export const removeRaster = (id) => {
 
 export const addRaster = (id) => {
   return function (dispatch) {
-    dispatch(addRasterSync(id));
-    return fetchItem('raster', id)
-      .then(data => {
-        dispatch(receiveRasterSuccess(id, data));
-        return data;
-      }).catch(errorObject => {
-        dispatch(receiveRasterFailure(id, errorObject.toString()));
-      });
+    return dispatch(fetchRaster(id))
+    .catch(e => {
+      handleReceiveError(e);
+    });
   };
 };

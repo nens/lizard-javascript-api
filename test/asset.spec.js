@@ -60,6 +60,7 @@ describe('Assets', () => {
     it('fetches asset from server (a-sync)', () => {
       const expected = { ...ASSET, name: RESPONSE.name };
       return whenAssetAdded.then(() => {
+        console.log(store.getState());
         equal(store.getState().assets[KEY], expected);
       });
     });
@@ -91,7 +92,7 @@ describe('Assets', () => {
     it('does not receive asset data from the server (a-sync)', () => {
       return whenAssetAdded.then(() => {
         equal(store.getState().assets[KEY], ASSET);
-      });
+      }).catch((e) => {console.log(e)} );
     });
 
     it('does not receive timeseries data from the server (a-sync)', () => {

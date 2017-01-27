@@ -1,5 +1,4 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { handleReceiveError } from '../utils';
 
 let defaultState = {};
 
@@ -18,7 +17,6 @@ export default (state = defaultState, action) => {
       return newState;
     case ActionTypes.RECEIVE_EVENTSERIES_FAILURE:
       newState.error = action.error;
-      handleReceiveError(action);
       return newState;
     case ActionTypes.REMOVE_EVENTSERIES:
       delete newState[action.uuid];

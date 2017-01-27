@@ -5,30 +5,22 @@ import {
   REMOVE_EVENTSERIES
 } from '../constants/ActionTypes';
 
-import { fetchItem } from '../utils';
+import { CALL_API } from '../middleware/api';
+import { handleReceiveError } from '../utils';
 
-const addEventseriesSync = (uuid) => {
-  return {
-    type: ADD_EVENTSERIES_SYNC,
-    uuid
-  };
-};
-
-const receiveEventseriesSuccess = (uuid, data) => {
-  return {
-    type: RECEIVE_EVENTSERIES_SUCCESS,
-    uuid,
-    data
-  };
-};
-
-const receiveEventseriesFailure = (uuid, error) => {
-  return {
-    type: RECEIVE_EVENTSERIES_FAILURE,
-    uuid,
-    error
-  };
-};
+// Fetches a single event series from Lizard API.
+// Relies on the custom API middleware defined in ../middleware/api.js.
+const fetchEventseries = (id) => ({
+  [CALL_API]: {
+    types: [
+      ADD_EVENTSERIES_SYNC,
+      RECEIVE_EVENTSERIES_SUCCESS,
+      RECEIVE_EVENTSERIES_FAILURE
+    ],
+    entity: 'eventseries',
+    id
+  }
+});
 
 export const removeEventseries = (uuid) => {
   return {
@@ -39,14 +31,9 @@ export const removeEventseries = (uuid) => {
 
 export const addEventseries = (uuid) => {
   return function (dispatch) {
-    dispatch(addEventseriesSync(uuid));
-    return fetchItem('eventseries', uuid)
-      .then(eventseries => {
-        dispatch(receiveEventseriesSuccess(uuid, eventseries));
-        return eventseries;
-      }).catch(errorObject => {
-        dispatch(receiveEventseriesFailure(uuid, errorObject.toString()));
-      });
+    return dispatch(fetchEventseries(uuid))
+    .catch(e => {
+      handleReceiveError(e);
+    });
   };
 };
-
