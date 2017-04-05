@@ -1,11 +1,12 @@
 {
-  "name": "Lizard-javascript-api",
-  "version": "0.1.0",
+  "name": "lizard-javascript-api",
+  "version": "0.2.0",
   "description": "Library to interact with lizard assets, rasters and timeseries.",
   "main": "lib/Lizard.js",
   "scripts": {
     "test": "mocha --require babel-polyfill --compilers js:babel-core/register ./test/*.spec.js",
     "build": "test && webpack --mode=build",
+    "release": "buck-trap -a",
     "start": "concurrently --raw --kill-others \"webpack-dev-server --mode=dev --progress --colors\" \"npm run test -- --watch\""
   },
   "devDependencies": {
@@ -38,13 +39,14 @@
     "api",
     "water"
   ],
-  "author": "Ernst Kuilder",
+  "author": "Gijs Nijholt",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/nens/lizard-javascript-api/issues"
   },
   "homepage": "https://github.com/nens/lizard-javascript-api",
   "dependencies": {
+    "buck-trap": "^1.0.14",
     "es6-promise": "^4.0.5",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.3",
