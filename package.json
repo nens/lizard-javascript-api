@@ -1,6 +1,6 @@
 {
   "name": "lizard-javascript-api",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Library to interact with lizard assets, rasters and timeseries.",
   "main": "lib/Lizard.js",
   "scripts": {
