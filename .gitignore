@@ -22,3 +22,7 @@ lib
 
 # MacOS
 .DS_Store
+
+# Buck-trap
+deploy
+tmp
