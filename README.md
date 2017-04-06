@@ -212,7 +212,7 @@ Note: the Lizard store contains timeseries metadata in timeseries and timeseries
 To read about `min_points` and other parameters you may include to format timeseries data, go to the [lizard REST api documentation](https://demo.lizard.net/doc/api.html#timeseries/).
 
 # Advanced: using redux
-If your app is using Redux or you want to use redux, need to proceed with some caution not to violate Redux principle of having only one source of truth in you app and thus only store. Therefore, when ininitializing Lizard, pass your app's reducers as the second argument:
+If your app is using Redux or you want to use redux, need to proceed with some caution not to violate Redux principle of having only one source of truth in you app and thus only store. Therefore, when initializing Lizard, pass your app's reducers as the second argument:
 
 ```js
 const myAppEntities = {
@@ -227,7 +227,7 @@ To initialize the store with preloaded data, for instance to perform server side
 ```js
 const store = Lizard({
   assets: {
-    pupstation$123: {
+    pumpstation$123: {
       entity: 'pumpstation',
       id: 123,
       name: 'You got to stay hydrated'
@@ -309,3 +309,56 @@ As of to date it is only a quarter done.
 - [ ] Create documentation for all actions.
 - [ ] Check for consistent isLoading flags, and document intended use.
 - [ ] Include caching.
+
+
+
+# Releasing a new bundle to Github
+
+In short, write commit messages in this format:
+
+```
+fix(SomeComponent): Description of some bugfix.
+feat(SomeComponent): Description of some new feature.
+chore(SomeComponent): Description of some chore.
+```
+See [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version) for more information on this semantic release standard.
+
+This will automatically generate the `CHANGELOG.md`.
+
+Add a file `deploy/auth.json`:
+
+```json
+{
+    "token": "Your-token-that-you-created-on-github"
+}
+```
+
+Generate [a new Personal Access Token](https://github.com/settings/tokens) on Github first and copy that token into `deploy/auth.json` in the place of `Your-token-that-you-created-on-github`.
+
+First build the project:
+```bash
+$ npm run build
+```
+
+Then run the release command as such:
+
+```bash
+$ npm run release
+```
+
+If all goes well, a [new release should appear](https://github.com/nens/lizard-javascript-api/releases) on Github.
+
+
+# Releasing to npmjs.com
+
+Run the following command:
+
+```bash
+$ npm publish
+```
+
+Since this is an ES6 project, the publish command will trigger the `prepublish` npm script as defined in `package.json`.
+The idea is that this will transpile the ES6 (ES2015) code to regular Javascript using Babel.
+The transpiled code will then be pushed to [https://www.npmjs.com/package/lizard-javascript-api](https://www.npmjs.com/package/lizard-javascript-api).
+
+From there on, you can import/require `lizard-javascript-api` in other projects by installing it via npm.
