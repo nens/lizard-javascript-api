@@ -2,15 +2,18 @@
   "name": "lizard-javascript-api",
   "version": "0.2.2",
   "description": "Library to interact with lizard assets, rasters and timeseries.",
-  "main": "lib/Lizard.js",
+  "main": "lib/index.js",
   "scripts": {
+    "compile": "babel --presets es2015,stage-0 -d lib/ src/",
     "test": "mocha --require babel-polyfill --compilers js:babel-core/register ./test/*.spec.js",
     "build": "test && webpack --mode=build",
     "release": "buck-trap -a",
+    "prepublish": "npm run compile",
     "start": "concurrently --raw --kill-others \"webpack-dev-server --mode=dev --progress --colors\" \"npm run test -- --watch\""
   },
   "devDependencies": {
     "babel": "6.3.13",
+    "babel-cli": "^6.24.0",
     "babel-core": "6.1.18",
     "babel-eslint": "5.0.0",
     "babel-loader": "6.2.0",
